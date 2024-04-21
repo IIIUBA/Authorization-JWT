@@ -7,6 +7,17 @@ go run main.go
 ```
 
 ## API:
+
+- Зарегаться
+```
+curl -X POST http://localhost:8080/api/v1/register -H "Content-Type: application/json" -d '{"login": "LOGIN", "password": "PASS"}'
+```
+
+- Авторизация
+```
+curl -X POST http://localhost:8080/api/v1/login -H "Content-Type: application/json" -d '{"login": "LOGIN", "password": "PASS"}'
+``` 
+
  - Отправить выражение, где " 2p3*4 " ваш пример | в http нельзя использовать +, поэтому вместо него пишите - p
 ```
 curl -X POST -d "expression=2p3*4" http://localhost:8080/expression
