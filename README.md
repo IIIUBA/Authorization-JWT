@@ -1,3 +1,5 @@
+# Большая просьба в случае ошибок/неполадок писать в телеграмм @iiiuba
+
 ## Установка:
 ```
 git clone https://github.com/IIIUBA/lms.git
