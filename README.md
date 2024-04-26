@@ -2,7 +2,7 @@
 
 ## Установка:
 ```
-git clone https://github.com/IIIUBA/lms.git
+git clone https://github.com/IIIUBA/auth.git
 ```
 ```
 go run main.go
