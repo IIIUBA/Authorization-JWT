@@ -282,6 +282,9 @@ func main() {
     w.WriteHeader(http.StatusOK)
   })
 
+  // cURL запрос для регистрации пользователя:
+  // curl -X POST -H "Content-Type: application/json" -d '{"login":"testuser","password":"testpassword"}' http://localhost:8080/api/v1/register
+
   http.HandleFunc("/api/v1/login", func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPost {
       http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -306,6 +309,9 @@ func main() {
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(map[string]string{"token": token})
   })
+
+  // cURL запрос для входа пользователя:
+  // curl -X POST-H "Content-Type: application/json" -d '{"login":"testuser","password":"testpassword"}' http://localhost:8080/api/v1/login
 
   http.HandleFunc("/expression", authMiddleware(func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPost {
@@ -336,6 +342,9 @@ func main() {
     w.WriteHeader(http.StatusOK)
   }))
 
+  // cURL запрос для добавления арифметического выражения:
+  // curl -X POST -H "Authorization: <token>" -d "expression=1p2p3" http://localhost:8080/expression
+
   http.HandleFunc("/expressions", authMiddleware(func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodGet {
       http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -349,6 +358,9 @@ func main() {
     }
     json.NewEncoder(w).Encode(allExpressions)
   }))
+
+  // cURL запрос для получения всех выражений пользователя:
+  // curl -X GET -H "Authorization: <token>" http://localhost:8080/expressions
 
   http.HandleFunc("/computation_agent", func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPost {
@@ -364,6 +376,9 @@ func main() {
     w.WriteHeader(http.StatusOK)
   })
 
+  // cURL запрос для добавления агентов вычислений:
+  // curl -X POST -d "add=2" http://localhost:8080/computation_agent
+
   http.HandleFunc("/agents_status", func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodGet {
       http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -371,6 +386,9 @@ func main() {
     }
     json.NewEncoder(w).Encode(computationManager.agents)
   })
+
+  // cURL запрос для получения статуса агентов вычислений:
+  // curl -X GET http://localhost:8080/agents_status
 
   log.Fatal(http.ListenAndServe(":8080", nil))
 }
@@ -407,13 +425,9 @@ func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
       return
     }
     if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-      userID, ok := claims["user_id"].(string)
-      if !ok {
-        http.Error(w, "Invalid token claims", http.StatusUnauthorized)
-        return
-      }
+      userID := claims["user_id"].(string)
       r.Header.Set("UserID", userID)
-      next.ServeHTTP(w, r)
+      next(w, r)
     } else {
       http.Error(w, "Invalid token", http.StatusUnauthorized)
     }
